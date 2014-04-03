@@ -1,0 +1,63 @@
+/*
+ * main.cpp
+ *
+ *  Created on: 2010-1-7
+ *      Author: tomzhou
+ */
+
+#include <iostream>
+#include <string>
+#include "util/FileUtil.h"
+#include "util/StringUtil.h"
+#include "util/LogUtil.h"
+#include "util/SysUtil.h"
+#include "util/DBMySQL.h"
+#include "Setting.h"
+#include <fstream>
+#include <sys/types.h>
+#include <unistd.h>
+
+#define VERSION "1.0"
+
+using namespace std;
+using namespace util;
+
+int main(int argc, char* argv[]) {
+
+    DBMySQL m("localhost", "root", "root", "monitor", 3306, "UTF8");
+    if (!m.connect()) {
+        cout << "connect to mysql error!" << endl;
+    }
+
+    cout << "Server Info:" << m.getServerInfo() << endl;
+    cout << "Client Info:" << m.getClientInfo() << endl;
+
+    cout << "Total rec:" << m.getOneNum("select count(*) from tblUser") << endl;
+
+    m.query("select * from tblUser");
+
+    m.setNullString("NULL");
+    vector<StringMap> res = m.getArray();
+
+    for (size_t i = 0; i < res.size(); i++) {
+        cout << "Name:" << res[i]["uName"] << " Password:" << res[i]["uPasswd"] << endl;
+        //cout << "Name:" << res[i]["uName"] << endl;
+    }
+
+    cout << "get one row:" << endl;
+    //m.query("select * from tblUser");
+    StringMap row = m.getOneRow();
+    cout << "Name:" << row["uName"] << " Password:" << row["uPasswd"] << endl;
+
+    m.query("select count(*) from tblUser");
+    cout << "Total rec:" << m.getOneNum() << endl;
+
+    //	vector<string> where;
+    //	where.push_back("uId=10");
+    //	where.push_back("uName like '%tom%'");
+    //
+    //	cout << "SQL:" << DBMySQL::getSql("select * from tblUser",where,"order by uId",10,20) << endl;
+    //	cout << "Escape:" << m.escape("This's a test! and i'm a monitor.[\\]") << endl;
+
+    return 0;
+}

@@ -1,0 +1,34 @@
+#include <util/config/configfile.h>
+
+using namespace util;
+
+int main(void)
+{
+	// Create config object
+	//
+	ConfigFile config;
+
+	
+	// load a configuration/.ini file
+	//
+	config.load("config.ini");
+
+	
+	// read information
+	//
+	config.setSection("General Info");
+	double cost = config.getDoubleValue("Cost");
+	const char *company = config.getStringValue("Company Name");
+
+	
+	// create information
+	//
+	config.setSection("new section");
+	config.setStringValue("animal type", "giraffe");
+	config.setBoolValue("mammal", true);
+	
+	// save changes
+	//
+	config.save();
+	return 0;
+}
